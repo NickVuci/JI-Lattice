@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Just Intonation Lattice</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="controls">
+        <label>X-Axis Interval: <input type="text" id="xAxisInterval" value="3/2"></label>
+        <label>Y-Axis Interval: <input type="text" id="yAxisInterval" value="5/4"></label>
+        <label>Label Size: <input type="number" id="labelSize" value="12"></label>
+        <label>Orientation (degrees): <input type="number" id="orientation" value="0"></label>
+        <label>Point Spacing: <input type="number" id="pointSpacing" value="100"></label>
+        <label>Label Format:
+            <select id="labelFormat">
+                <option value="fraction">Fraction</option>
+                <option value="decimal">Decimal</option>
+            </select>
+        </label>
+        <label><input type="checkbox" id="emphasizeOne"> Emphasize 1 (1/1)</label>
+        <hr>
+        <label><input type="checkbox" id="findCommas"> Find Commas</label>
+        <label>Min Cents: <input type="number" id="minCents" value="0" step="0.01"></label>
+        <label>Max Cents: <input type="number" id="maxCents" value="5" step="0.01"></label>
+        <label><input type="checkbox" id="showNonCommas" checked> Show Non-Comma Intervals</label>
+        <hr>
+        <label><input type="checkbox" id="tonnetzToggle"> Tonnetz Lattice</label>
+        <button id="redraw">Redraw</button>
+    </div>
+    <div id="zoomControls">
+        <button id="zoomIn">Zoom In</button>
+        <button id="zoomOut">Zoom Out</button>
+    </div>
+    <div id="tooltip"></div>
+    <script src="script.js"></script>
+    <script src="tonnetzToggle.js"></script>
+</body>
+</html>
