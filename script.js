@@ -1,6 +1,5 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var tooltip = document.getElementById('tooltip');
 var points = []; // Store point data for interaction
 let isTonnetzMode = false; // Tonnetz lattice mode
 
@@ -186,34 +185,10 @@ function getHeatMapColor(value, min, max) {
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 
-canvas.addEventListener('mousemove', function(event) {
-    var rect = canvas.getBoundingClientRect();
-    var mouseX = event.clientX - rect.left;
-    var mouseY = event.clientY - rect.top;
-    var found = false;
-
-    for (var i = 0; i < points.length; i++) {
-        var point = points[i];
-        var dx = mouseX - point.x;
-        var dy = mouseY - point.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance <= point.radius + 2) {
-            tooltip.style.left = (point.x + 15) + 'px';
-            tooltip.style.top = (point.y + 15) + 'px';
-            tooltip.innerHTML = 'Interval: ' + point.label + '<br>Cents: ' + point.cents;
-            tooltip.style.display = 'block';
-            found = true;
-            break;
-        }
-    }
-
-    if (!found) {
-        tooltip.style.display = 'none';
-    }
-});
-
-canvas.addEventListener('mouseout', function() {
-    tooltip.style.display = 'none';
-});
-
 resizeCanvas();
+
+// Call drawLattice initially when the DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    resizeCanvas(); // Adjust the canvas size initially
+    drawLattice();  // Draw the lattice on page load
+});
