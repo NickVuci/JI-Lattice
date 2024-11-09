@@ -2,7 +2,6 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var tooltip = document.getElementById('tooltip');
 var points = []; // Store point data for interaction
-var zoomFactor = 1; // Zoom level, default to 1
 let isTonnetzMode = false; // Tonnetz lattice mode
 
 function resizeCanvas() {
@@ -14,16 +13,6 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 
 document.getElementById('redraw').addEventListener('click', drawLattice);
-
-document.getElementById('zoomIn').addEventListener('click', function() {
-    zoomFactor *= 1.2; // Increase zoom by 20%
-    drawLattice();
-});
-
-document.getElementById('zoomOut').addEventListener('click', function() {
-    zoomFactor /= 1.2; // Decrease zoom by 20%
-    drawLattice();
-});
 
 document.getElementById('tonnetzToggle').addEventListener('change', function() {
     isTonnetzMode = this.checked;
@@ -82,7 +71,7 @@ function drawLattice() {
     var yAxisIntervalStr = document.getElementById('yAxisInterval').value;
     var labelSize = parseInt(document.getElementById('labelSize').value);
     var orientation = parseFloat(document.getElementById('orientation').value) * Math.PI / 180;
-    var pointSpacing = parseFloat(document.getElementById('pointSpacing').value) * zoomFactor;
+    var pointSpacing = parseFloat(document.getElementById('pointSpacing').value) * window.zoomFactor; // Reference zoomFactor here
     var labelFormat = document.getElementById('labelFormat').value;
     var emphasizeOne = document.getElementById('emphasizeOne').checked;
     var findCommas = document.getElementById('findCommas').checked;
