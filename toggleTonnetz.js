@@ -1,8 +1,9 @@
-// Variable to track Tonnetz mode
-let isTonnetzMode = false;
+// toggleTonnetz.js
+import { drawLattice } from './lattice.js';
+import { getSettings, setTonnetzMode } from './script.js';
 
 // Event listener for the Tonnetz toggle checkbox
 document.getElementById('tonnetzToggle').addEventListener('change', function() {
-    isTonnetzMode = this.checked;
-    drawLattice(); // Redraw the lattice when toggled
+    setTonnetzMode(this.checked);
+    drawLattice(getSettings()); // Redraw the lattice when toggled
 });

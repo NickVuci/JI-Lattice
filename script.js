@@ -1,21 +1,63 @@
+// script.js
+import { drawLattice } from './lattice.js';
+
+export var points = []; // Store point data for interaction
+let isTonnetzMode = false; // Tonnetz lattice mode
+
+export function getSettings() {
+    return {
+        xAxisIntervalStr: document.getElementById('xAxisInterval').value,
+        yAxisIntervalStr: document.getElementById('yAxisInterval').value,
+        labelSize: parseInt(document.getElementById('labelSize').value),
+        orientation: parseFloat(document.getElementById('orientation').value) * Math.PI / 180,
+        pointSpacing: parseFloat(document.getElementById('pointSpacing').value) * window.zoomFactor,
+        labelFormat: document.getElementById('labelFormat').value,
+        emphasizeOne: document.getElementById('emphasizeOne').checked,
+        findCommas: document.getElementById('findCommas').checked,
+        showNonCommaIntervals: document.getElementById('showNonCommas').checked,
+        minCents: parseFloat(document.getElementById('minCents').value),
+        maxCents: parseFloat(document.getElementById('maxCents').value),
+        isTonnetzMode: isTonnetzMode // Include isTonnetzMode in settings
+    };
+}
+
+export function setTonnetzMode(value) {
+    isTonnetzMode = value;
+}
+
+window.zoomFactor = 1; // Initialize zoom factor
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-var points = []; // Store point data for interaction
-let isTonnetzMode = false; // Tonnetz lattice mode
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    drawLattice();
+    drawLattice(getSettings());
 }
 
 window.addEventListener('resize', resizeCanvas);
 
-document.getElementById('redraw').addEventListener('click', drawLattice);
-
+document.getElementById('redraw').addEventListener('click', () => drawLattice(getSettings()));
 document.getElementById('tonnetzToggle').addEventListener('change', function() {
-    isTonnetzMode = this.checked;
-    drawLattice(); // Redraw the lattice when toggled
+    setTonnetzMode(this.checked);
+    drawLattice(getSettings());
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    resizeCanvas(); // Adjust the canvas size initially
+    drawLattice(getSettings());  // Draw the lattice on page load
+});
+
+// Add wheel event listener for zooming
+canvas.addEventListener('wheel', function(event) {
+    event.preventDefault();
+    if (event.deltaY < 0) {
+        window.zoomFactor *= 1.1; // Zoom in
+    } else {
+        window.zoomFactor /= 1.1; // Zoom out
+    }
+    drawLattice(getSettings());
 });
 
 function parseFraction(str) {
@@ -62,108 +104,6 @@ function getIntervalLabel(intervalDecimal, labelFormat) {
     }
 }
 
-function drawLattice() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    points = []; // Reset points array
-
-    var xAxisIntervalStr = document.getElementById('xAxisInterval').value;
-    var yAxisIntervalStr = document.getElementById('yAxisInterval').value;
-    var labelSize = parseInt(document.getElementById('labelSize').value);
-    var orientation = parseFloat(document.getElementById('orientation').value) * Math.PI / 180;
-    var pointSpacing = parseFloat(document.getElementById('pointSpacing').value) * window.zoomFactor; // Reference zoomFactor here
-    var labelFormat = document.getElementById('labelFormat').value;
-    var emphasizeOne = document.getElementById('emphasizeOne').checked;
-    var findCommas = document.getElementById('findCommas').checked;
-    var showNonCommas = document.getElementById('showNonCommas').checked;
-    var minCents = parseFloat(document.getElementById('minCents').value);
-    var maxCents = parseFloat(document.getElementById('maxCents').value);
-
-    var xAxisInterval = parseFraction(xAxisIntervalStr);
-    var yAxisInterval = parseFraction(yAxisIntervalStr);
-
-    if (isNaN(xAxisInterval) || isNaN(yAxisInterval)) {
-        alert('Please enter valid intervals.');
-        return;
-    }
-
-    var maxDistance = Math.sqrt((canvas.width / 2) * (canvas.width / 2) + (canvas.height / 2) * (canvas.height / 2));
-    var N = Math.ceil(maxDistance / pointSpacing) + 1;
-
-    for (var i = -N; i <= N; i++) {
-        for (var j = -N; j <= N; j++) {
-            // Determine position based on Tonnetz mode
-            var x, y;
-            if (isTonnetzMode) {
-                // Tonnetz triangular grid arrangement
-                x = (i + j / 2) * pointSpacing;
-                y = (j * Math.sqrt(3) / 2) * pointSpacing;
-            } else {
-                // Standard square grid
-                x = i * pointSpacing;
-                y = j * pointSpacing;
-            }
-
-            // Apply rotation
-            var xRot = x * Math.cos(orientation) - y * Math.sin(orientation);
-            var yRot = x * Math.sin(orientation) + y * Math.cos(orientation);
-
-            // Translate to canvas center
-            var canvasX = xRot + canvas.width / 2;
-            var canvasY = yRot + canvas.height / 2;
-
-            if (canvasX < -50 || canvasX > canvas.width + 50 || canvasY < -50 || canvasY > canvas.height + 50) {
-                continue;
-            }
-
-            var intervalDecimal = Math.pow(xAxisInterval, i) * Math.pow(yAxisInterval, j);
-            while (intervalDecimal < 1) {
-                intervalDecimal *= 2;
-            }
-            while (intervalDecimal >= 2) {
-                intervalDecimal /= 2;
-            }
-
-            var centsDifference = Math.abs(ratioToCents(intervalDecimal));
-            var isOne = Math.abs(intervalDecimal - 1) < 0.0001;
-
-            var emphasizePoint = false;
-            var pointColor = '#000';
-
-            if (emphasizeOne && isOne) {
-                emphasizePoint = true;
-                pointColor = '#FF0000'; // Red color for 1/1
-            }
-
-            if (findCommas && !isOne) {
-                if (centsDifference >= minCents && centsDifference <= maxCents) {
-                    emphasizePoint = true;
-                    pointColor = getHeatMapColor(centsDifference, minCents, maxCents); // Set color based on heat map
-                } else if (!showNonCommas) {
-                    continue; // Skip points outside the comma range if showNonCommas is false
-                }
-            }
-
-            points.push({
-                x: canvasX,
-                y: canvasY,
-                radius: emphasizePoint ? 10 : 5,
-                label: getIntervalLabel(intervalDecimal, labelFormat),
-                cents: centsDifference.toFixed(2),
-                color: pointColor
-            });
-
-            ctx.beginPath();
-            ctx.fillStyle = pointColor;
-            ctx.arc(canvasX, canvasY, emphasizePoint ? 10 : 5, 0, 2 * Math.PI);
-            ctx.fill();
-
-            ctx.font = labelSize + "px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText(getIntervalLabel(intervalDecimal, labelFormat), canvasX, canvasY - 10);
-        }
-    }
-}
-
 function getHeatMapColor(value, min, max) {
     // Normalize value to range [0, 1]
     var t = (value - min) / (max - min);
@@ -187,8 +127,27 @@ function getHeatMapColor(value, min, max) {
 
 resizeCanvas();
 
-// Call drawLattice initially when the DOM is loaded
-document.addEventListener("DOMContentLoaded", function() {
-    resizeCanvas(); // Adjust the canvas size initially
-    drawLattice();  // Draw the lattice on page load
+document.getElementById('redraw').addEventListener('click', () => drawLattice(getSettings()));
+document.getElementById('tonnetzToggle').addEventListener('change', function() {
+    setTonnetzMode(this.checked);
+    drawLattice(getSettings());
+});
+
+// Add event listeners for control options
+const controls = [
+    'xAxisInterval', 'yAxisInterval', 'labelSize', 'orientation', 'pointSpacing',
+    'labelFormat', 'emphasizeOne', 'findCommas', 'minCents', 'maxCents', 'showNonCommas'
+];
+
+controls.forEach(control => {
+    document.getElementById(control).addEventListener('change', () => drawLattice(getSettings()));
+});
+
+document.getElementById('toggleControls').addEventListener('click', function() {
+    var controls = document.getElementById('controls');
+    if (controls.classList.contains('hidden')) {
+        controls.classList.remove('hidden');
+    } else {
+        controls.classList.add('hidden');
+    }
 });

@@ -7,6 +7,7 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
+    <button id="toggleControls">Toggle Options</button>
     <div id="controls">
         <label>X-Axis Interval: <input type="text" id="xAxisInterval" value="3/2"></label>
         <label>Y-Axis Interval: <input type="text" id="yAxisInterval" value="5/4"></label>
@@ -19,22 +20,20 @@
                 <option value="decimal">Decimal</option>
             </select>
         </label>
-        <label><input type="checkbox" id="emphasizeOne"> Emphasize 1 (1/1)</label>
-        <hr>
+        <label><input type="checkbox" id="emphasizeOne"> Emphasize 1/1</label>
         <label><input type="checkbox" id="findCommas"> Find Commas</label>
         <label>Min Cents: <input type="number" id="minCents" value="0" step="0.01"></label>
         <label>Max Cents: <input type="number" id="maxCents" value="5" step="0.01"></label>
         <label><input type="checkbox" id="showNonCommas" checked> Show Non-Comma Intervals</label>
-        <hr>
         <label><input type="checkbox" id="tonnetzToggle"> Tonnetz Lattice</label>
         <button id="redraw">Redraw</button>
         <button id="zoomIn">Zoom In</button>
         <button id="zoomOut">Zoom Out</button>
     </div>
     <div id="tooltip"></div>
-    <script src="script.js"></script>
-    <script src="zoom.js"></script>
-    <script src="tooltip.js"></script>
-    <script src="tonnetzToggle.js"></script>
+    <script type="module" src="script.js"></script>
+    <script type="module" src="zoom.js"></script>
+    <script type="module" src="tooltip.js"></script>
+    <script type="module" src="toggleTonnetz.js"></script>
 </body>
 </html>

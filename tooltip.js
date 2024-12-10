@@ -1,9 +1,12 @@
+import { points } from './lattice.js';
+
 var tooltip = document.getElementById('tooltip');
+var canvas = document.getElementById('canvas');
 
 // Function to show tooltip for a point
 function showTooltip(point, event) {
-    tooltip.style.left = (point.x + 15) + 'px';
-    tooltip.style.top = (point.y + 15) + 'px';
+    tooltip.style.left = (event.clientX + 15) + 'px';
+    tooltip.style.top = (event.clientY + 15) + 'px';
     tooltip.innerHTML = 'Interval: ' + point.label + '<br>Cents: ' + point.cents;
     tooltip.style.display = 'block';
 }
@@ -22,8 +25,8 @@ canvas.addEventListener('mousemove', function(event) {
 
     for (var i = 0; i < points.length; i++) {
         var point = points[i];
-        var dx = mouseX - point.x;
-        var dy = mouseY - point.y;
+        var dx = (mouseX - point.x) / window.zoomFactor;
+        var dy = (mouseY - point.y) / window.zoomFactor;
         var distance = Math.sqrt(dx * dx + dy * dy);
         if (distance <= point.radius + 2) {
             showTooltip(point, event);
