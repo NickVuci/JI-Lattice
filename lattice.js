@@ -6,7 +6,6 @@ export let points = []; // Export points array
 export function drawLattice(settings) {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const tooltip = document.getElementById('tooltip');
     points = []; // Reset points array
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -14,7 +13,8 @@ export function drawLattice(settings) {
     const {
         xAxisIntervalStr, yAxisIntervalStr, labelSize, orientation,
         pointSpacing, labelFormat, emphasizeOne, findCommas, 
-        showNonCommaIntervals, minCents, maxCents, isTonnetzMode
+        showNonCommaIntervals, minCents, maxCents, isTonnetzMode,
+        showGridLines, xAxisColor, yAxisColor
     } = settings;
 
     const xAxisInterval = parseFraction(xAxisIntervalStr);
@@ -27,6 +27,37 @@ export function drawLattice(settings) {
 
     const maxDistance = Math.sqrt((canvas.width / 2) ** 2 + (canvas.height / 2) ** 2);
     const N = Math.ceil(maxDistance / pointSpacing) + 1;
+
+    if (showGridLines) {
+        // Draw grid lines for each row and column
+        ctx.strokeStyle = xAxisColor;
+        for (let i = -N; i <= N; i++) {
+            const x = i * pointSpacing;
+            const xRotStart = x * Math.cos(orientation) - (-canvas.height / 2) * Math.sin(orientation);
+            const yRotStart = x * Math.sin(orientation) + (-canvas.height / 2) * Math.cos(orientation);
+            const xRotEnd = x * Math.cos(orientation) - (canvas.height / 2) * Math.sin(orientation);
+            const yRotEnd = x * Math.sin(orientation) + (canvas.height / 2) * Math.cos(orientation);
+
+            ctx.beginPath();
+            ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
+            ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = yAxisColor;
+        for (let j = -N; j <= N; j++) {
+            const y = j * pointSpacing;
+            const xRotStart = (-canvas.width / 2) * Math.cos(orientation) - y * Math.sin(orientation);
+            const yRotStart = (-canvas.width / 2) * Math.sin(orientation) + y * Math.cos(orientation);
+            const xRotEnd = (canvas.width / 2) * Math.cos(orientation) - y * Math.sin(orientation);
+            const yRotEnd = (canvas.width / 2) * Math.sin(orientation) + y * Math.cos(orientation);
+
+            ctx.beginPath();
+            ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
+            ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
+            ctx.stroke();
+        }
+    }
 
     for (let i = -N; i <= N; i++) {
         for (let j = -N; j <= N; j++) {

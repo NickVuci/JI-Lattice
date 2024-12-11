@@ -17,7 +17,10 @@ export function getSettings() {
         showNonCommaIntervals: document.getElementById('showNonCommas').checked,
         minCents: parseFloat(document.getElementById('minCents').value),
         maxCents: parseFloat(document.getElementById('maxCents').value),
-        isTonnetzMode: isTonnetzMode // Include isTonnetzMode in settings
+        isTonnetzMode: isTonnetzMode,
+        showGridLines: document.getElementById('showGridLines').checked,
+        xAxisColor: document.getElementById('xAxisColor').value,
+        yAxisColor: document.getElementById('yAxisColor').value
     };
 }
 
