@@ -33,10 +33,10 @@ export function drawLattice(settings) {
         ctx.strokeStyle = xAxisColor;
         for (let i = -N; i <= N; i++) {
             const x = i * pointSpacing;
-            const xRotStart = x * Math.cos(orientation) - (-canvas.height / 2) * Math.sin(orientation);
-            const yRotStart = x * Math.sin(orientation) + (-canvas.height / 2) * Math.cos(orientation);
-            const xRotEnd = x * Math.cos(orientation) - (canvas.height / 2) * Math.sin(orientation);
-            const yRotEnd = x * Math.sin(orientation) + (canvas.height / 2) * Math.cos(orientation);
+            const xRotStart = x * Math.cos(orientation) - (-canvas.height) * Math.sin(orientation);
+            const yRotStart = x * Math.sin(orientation) + (-canvas.height) * Math.cos(orientation);
+            const xRotEnd = x * Math.cos(orientation) - (canvas.height) * Math.sin(orientation);
+            const yRotEnd = x * Math.sin(orientation) + (canvas.height) * Math.cos(orientation);
 
             ctx.beginPath();
             ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
@@ -47,10 +47,10 @@ export function drawLattice(settings) {
         ctx.strokeStyle = yAxisColor;
         for (let j = -N; j <= N; j++) {
             const y = j * pointSpacing;
-            const xRotStart = (-canvas.width / 2) * Math.cos(orientation) - y * Math.sin(orientation);
-            const yRotStart = (-canvas.width / 2) * Math.sin(orientation) + y * Math.cos(orientation);
-            const xRotEnd = (canvas.width / 2) * Math.cos(orientation) - y * Math.sin(orientation);
-            const yRotEnd = (canvas.width / 2) * Math.sin(orientation) + y * Math.cos(orientation);
+            const xRotStart = (-canvas.width) * Math.cos(orientation) - y * Math.sin(orientation);
+            const yRotStart = (-canvas.width) * Math.sin(orientation) + y * Math.cos(orientation);
+            const xRotEnd = (canvas.width) * Math.cos(orientation) - y * Math.sin(orientation);
+            const yRotEnd = (canvas.width) * Math.sin(orientation) + y * Math.cos(orientation);
 
             ctx.beginPath();
             ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);

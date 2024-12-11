@@ -139,7 +139,8 @@ document.getElementById('tonnetzToggle').addEventListener('change', function() {
 // Add event listeners for control options
 const controls = [
     'xAxisInterval', 'yAxisInterval', 'labelSize', 'orientation', 'pointSpacing',
-    'labelFormat', 'emphasizeOne', 'findCommas', 'minCents', 'maxCents', 'showNonCommas'
+    'labelFormat', 'emphasizeOne', 'findCommas', 'minCents', 'maxCents', 'showNonCommas',
+    'showGridLines', 'xAxisColor', 'yAxisColor'
 ];
 
 controls.forEach(control => {
