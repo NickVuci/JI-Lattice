@@ -30,8 +30,8 @@ export function setTonnetzMode(value) {
 
 window.zoomFactor = 1; // Initialize zoom factor
 
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext('2d');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -39,54 +39,41 @@ function resizeCanvas() {
     drawLattice(getSettings());
 }
 
-window.addEventListener('resize', resizeCanvas);
+function toggleControls() {
+    const controls = document.getElementById('controls');
+    controls.classList.toggle('hidden');
+}
 
-document.getElementById('redraw').addEventListener('click', () => drawLattice(getSettings()));
-document.getElementById('tonnetzToggle').addEventListener('change', function() {
-    setTonnetzMode(this.checked);
+function handleZoom(event) {
+    event.preventDefault();
+    window.zoomFactor *= event.deltaY < 0 ? 1.1 : 1 / 1.1;
     drawLattice(getSettings());
-});
+}
+
+function initializeEventListeners() {
+    document.getElementById('redraw').addEventListener('click', () => drawLattice(getSettings()));
+    document.getElementById('tonnetzToggle').addEventListener('change', function() {
+        setTonnetzMode(this.checked);
+        drawLattice(getSettings());
+    });
+
+    const controls = [
+        'xAxisInterval', 'yAxisInterval', 'labelSize', 'orientation', 'pointSpacing',
+        'labelFormat', 'emphasizeOne', 'findCommas', 'minCents', 'maxCents', 'showNonCommas',
+        'showGridLines', 'xAxisColor', 'yAxisColor'
+    ];
+
+    controls.forEach(control => {
+        document.getElementById(control).addEventListener('change', () => drawLattice(getSettings()));
+    });
+
+    document.getElementById('toggleControls').addEventListener('click', toggleControls);
+    canvas.addEventListener('wheel', handleZoom);
+    window.addEventListener('resize', resizeCanvas);
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     resizeCanvas(); // Adjust the canvas size initially
     drawLattice(getSettings());  // Draw the lattice on page load
-});
-
-// Add wheel event listener for zooming
-canvas.addEventListener('wheel', function(event) {
-    event.preventDefault();
-    if (event.deltaY < 0) {
-        window.zoomFactor *= 1.1; // Zoom in
-    } else {
-        window.zoomFactor /= 1.1; // Zoom out
-    }
-    drawLattice(getSettings());
-});
-
-resizeCanvas();
-
-document.getElementById('redraw').addEventListener('click', () => drawLattice(getSettings()));
-document.getElementById('tonnetzToggle').addEventListener('change', function() {
-    setTonnetzMode(this.checked);
-    drawLattice(getSettings());
-});
-
-// Add event listeners for control options
-const controls = [
-    'xAxisInterval', 'yAxisInterval', 'labelSize', 'orientation', 'pointSpacing',
-    'labelFormat', 'emphasizeOne', 'findCommas', 'minCents', 'maxCents', 'showNonCommas',
-    'showGridLines', 'xAxisColor', 'yAxisColor'
-];
-
-controls.forEach(control => {
-    document.getElementById(control).addEventListener('change', () => drawLattice(getSettings()));
-});
-
-document.getElementById('toggleControls').addEventListener('click', function() {
-    var controls = document.getElementById('controls');
-    if (controls.classList.contains('hidden')) {
-        controls.classList.remove('hidden');
-    } else {
-        controls.classList.add('hidden');
-    }
+    initializeEventListeners();
 });
