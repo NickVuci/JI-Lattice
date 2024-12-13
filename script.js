@@ -19,8 +19,6 @@ export function getSettings() {
         maxCents: parseFloat(document.getElementById('maxCents').value),
         isTonnetzMode: isTonnetzMode,
         showGridLines: document.getElementById('showGridLines').checked,
-        xAxisColor: document.getElementById('xAxisColor').value,
-        yAxisColor: document.getElementById('yAxisColor').value
     };
 }
 
@@ -60,7 +58,7 @@ function initializeEventListeners() {
     const controls = [
         'xAxisInterval', 'yAxisInterval', 'labelSize', 'orientation', 'pointSpacing',
         'labelFormat', 'emphasizeOne', 'findCommas', 'minCents', 'maxCents', 'showNonCommas',
-        'showGridLines', 'xAxisColor', 'yAxisColor'
+        'showGridLines',
     ];
 
     controls.forEach(control => {

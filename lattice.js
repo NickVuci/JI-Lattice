@@ -1,4 +1,3 @@
-// lattice.js
 import { parseFraction, ratioToCents, getIntervalLabel, decimalToFraction, getColorGradient } from './utils.js';
 
 export let points = []; // Export points array
@@ -7,14 +6,14 @@ export function drawLattice(settings) {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     points = []; // Reset points array
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const {
         xAxisIntervalStr, yAxisIntervalStr, labelSize, orientation,
         pointSpacing, labelFormat, emphasizeOne, findCommas, 
         showNonCommaIntervals, minCents, maxCents, isTonnetzMode,
-        showGridLines, xAxisColor, yAxisColor
+        showGridLines,
     } = settings;
 
     const xAxisInterval = parseFraction(xAxisIntervalStr);
@@ -29,33 +28,65 @@ export function drawLattice(settings) {
     const N = Math.ceil(maxDistance / pointSpacing) + 1;
 
     if (showGridLines) {
-        // Draw grid lines for each row and column
-        ctx.strokeStyle = xAxisColor;
-        for (let i = -N; i <= N; i++) {
-            const x = i * pointSpacing;
-            const xRotStart = x * Math.cos(orientation) - (-canvas.height) * Math.sin(orientation);
-            const yRotStart = x * Math.sin(orientation) + (-canvas.height) * Math.cos(orientation);
-            const xRotEnd = x * Math.cos(orientation) - (canvas.height) * Math.sin(orientation);
-            const yRotEnd = x * Math.sin(orientation) + (canvas.height) * Math.cos(orientation);
+        if (isTonnetzMode) {
+            ctx.strokeStyle = '#000000';
+            // Draw Tonnetz grid lines
+            for (let i = -N; i <= N; i++) {
+                for (let j = -N; j <= N; j++) {
+                    const x = (i + j / 2) * pointSpacing;
+                    const y = (j * Math.sqrt(3) / 2) * pointSpacing;
 
-            ctx.beginPath();
-            ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
-            ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
-            ctx.stroke();
-        }
+                    // Neighbors in the Tonnetz grid
+                    const neighbors = [
+                        [i + 1, j],         // Right neighbor
+                        [i, j + 1],         // Up neighbor
+                        [i - 1, j + 1],     // Up-left neighbor
+                    ];
 
-        ctx.strokeStyle = yAxisColor;
-        for (let j = -N; j <= N; j++) {
-            const y = j * pointSpacing;
-            const xRotStart = (-canvas.width) * Math.cos(orientation) - y * Math.sin(orientation);
-            const yRotStart = (-canvas.width) * Math.sin(orientation) + y * Math.cos(orientation);
-            const xRotEnd = (canvas.width) * Math.cos(orientation) - y * Math.sin(orientation);
-            const yRotEnd = (canvas.width) * Math.sin(orientation) + y * Math.cos(orientation);
+                    for (const [ni, nj] of neighbors) {
+                        const nx = (ni + nj / 2) * pointSpacing;
+                        const ny = (nj * Math.sqrt(3) / 2) * pointSpacing;
 
-            ctx.beginPath();
-            ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
-            ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
-            ctx.stroke();
+                        // Apply orientation rotation
+                        const xRotStart = x * Math.cos(orientation) - y * Math.sin(orientation);
+                        const yRotStart = x * Math.sin(orientation) + y * Math.cos(orientation);
+                        const xRotEnd = nx * Math.cos(orientation) - ny * Math.sin(orientation);
+                        const yRotEnd = nx * Math.sin(orientation) + ny * Math.cos(orientation);
+
+                        ctx.beginPath();
+                        ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
+                        ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
+                        ctx.stroke();
+                    }
+                }
+            }
+        } else {
+            // Draw grid lines for each row and column
+            for (let i = -N; i <= N; i++) {
+                const x = i * pointSpacing;
+                const xRotStart = x * Math.cos(orientation) - (-canvas.height) * Math.sin(orientation);
+                const yRotStart = x * Math.sin(orientation) + (-canvas.height) * Math.cos(orientation);
+                const xRotEnd = x * Math.cos(orientation) - (canvas.height) * Math.sin(orientation);
+                const yRotEnd = x * Math.sin(orientation) + (canvas.height) * Math.cos(orientation);
+    
+                ctx.beginPath();
+                ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
+                ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
+                ctx.stroke();
+            }
+    
+            for (let j = -N; j <= N; j++) {
+                const y = j * pointSpacing;
+                const xRotStart = (-canvas.width) * Math.cos(orientation) - y * Math.sin(orientation);
+                const yRotStart = (-canvas.width) * Math.sin(orientation) + y * Math.cos(orientation);
+                const xRotEnd = (canvas.width) * Math.cos(orientation) - y * Math.sin(orientation);
+                const yRotEnd = (canvas.width) * Math.sin(orientation) + y * Math.cos(orientation);
+    
+                ctx.beginPath();
+                ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
+                ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
+                ctx.stroke();
+            }
         }
     }
 
@@ -91,11 +122,7 @@ export function drawLattice(settings) {
 
             // Calculate interval
             let intervalDecimal;
-            if (isTonnetzMode) {
-                intervalDecimal = Math.pow(xAxisInterval, i) * Math.pow(yAxisInterval, j);
-            } else {
-                intervalDecimal = Math.pow(xAxisInterval, i) * Math.pow(yAxisInterval, j);
-            }
+            intervalDecimal = Math.pow(xAxisInterval, i) * Math.pow(yAxisInterval, j);
 
             // Normalize interval to within one octave
             while (intervalDecimal < 1) intervalDecimal *= 2;
