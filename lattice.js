@@ -156,6 +156,7 @@ export function drawLattice(settings) {
                 label: getIntervalLabel(intervalDecimal, labelFormat),
                 cents: centsDifference.toFixed(2),
                 color: pointColor,
+                intervalDecimal: intervalDecimal // Add this line to store intervalDecimal
             });
 
             ctx.beginPath();

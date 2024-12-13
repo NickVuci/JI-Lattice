@@ -12,9 +12,13 @@ export function ratioToCents(ratio) {
 }
 
 export function getIntervalLabel(intervalDecimal, labelFormat) {
-    return labelFormat === 'fraction'
-        ? decimalToFraction(intervalDecimal)
-        : intervalDecimal.toFixed(4);
+    if (labelFormat === 'fraction') {
+        return decimalToFraction(intervalDecimal);
+    } else if (labelFormat === 'decimal') {
+        return intervalDecimal.toFixed(4);
+    } else if (labelFormat === 'cents') {
+        return ratioToCents(intervalDecimal).toFixed(2) + '¢';
+    }
 }
 
 export function decimalToFraction(decimal, maxDenominator = 1000) {

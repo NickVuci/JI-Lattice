@@ -1,13 +1,16 @@
 import { points } from './lattice.js';
+import { decimalToFraction, ratioToCents } from './utils.js';
 
 var tooltip = document.getElementById('tooltip');
 var canvas = document.getElementById('canvas');
 
 // Function to show tooltip for a point
 function showTooltip(point, event) {
+    const fractionLabel = decimalToFraction(point.intervalDecimal);
+    const centsLabel = ratioToCents(point.intervalDecimal).toFixed(2) + '¢';
     tooltip.style.left = (event.clientX + 15) + 'px';
     tooltip.style.top = (event.clientY + 15) + 'px';
-    tooltip.innerHTML = 'Interval: ' + point.label + '<br>Cents: ' + point.cents;
+    tooltip.innerHTML = `Interval: ${fractionLabel}<br>Cents: ${centsLabel}`;
     tooltip.style.display = 'block';
 }
 
