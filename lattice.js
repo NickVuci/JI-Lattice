@@ -1,4 +1,4 @@
-import { parseFraction, ratioToCents, getIntervalLabel, decimalToFraction, getColorGradient } from './utils.js';
+import { parseFraction, ratioToCents, getIntervalLabel, getColorGradient } from './utils.js';
 
 export let points = []; // Export points array
 
@@ -13,7 +13,7 @@ export function drawLattice(settings) {
         xAxisIntervalStr, yAxisIntervalStr, labelSize, orientation,
         pointSpacing, labelFormat, emphasizeOne, findCommas, 
         showNonCommaIntervals, minCents, maxCents, isTonnetzMode,
-        showGridLines,
+        showGridLines, includeInverseRange,
     } = settings;
 
     const xAxisInterval = parseFraction(xAxisIntervalStr);
@@ -47,15 +47,9 @@ export function drawLattice(settings) {
                         const nx = (ni + nj / 2) * pointSpacing;
                         const ny = (nj * Math.sqrt(3) / 2) * pointSpacing;
 
-                        // Apply orientation rotation
-                        const xRotStart = x * Math.cos(orientation) - y * Math.sin(orientation);
-                        const yRotStart = x * Math.sin(orientation) + y * Math.cos(orientation);
-                        const xRotEnd = nx * Math.cos(orientation) - ny * Math.sin(orientation);
-                        const yRotEnd = nx * Math.sin(orientation) + ny * Math.cos(orientation);
-
                         ctx.beginPath();
-                        ctx.moveTo(xRotStart + canvas.width / 2, yRotStart + canvas.height / 2);
-                        ctx.lineTo(xRotEnd + canvas.width / 2, yRotEnd + canvas.height / 2);
+                        ctx.moveTo(x + canvas.width / 2, y + canvas.height / 2);
+                        ctx.lineTo(nx + canvas.width / 2, ny + canvas.height / 2);
                         ctx.stroke();
                     }
                 }
@@ -129,6 +123,7 @@ export function drawLattice(settings) {
             while (intervalDecimal >= 2) intervalDecimal /= 2;
 
             const centsDifference = Math.abs(ratioToCents(intervalDecimal));
+            const inverseCentsDifference = 1200 - centsDifference;
             const isOne = Math.abs(intervalDecimal - 1) < 0.0001;
 
             let emphasizePoint = false;
@@ -140,7 +135,8 @@ export function drawLattice(settings) {
             }
 
             if (findCommas && !isOne) {
-                if (centsDifference >= minCents && centsDifference <= maxCents) {
+                if ((centsDifference >= minCents && centsDifference <= maxCents) ||
+                    (includeInverseRange && inverseCentsDifference >= minCents && inverseCentsDifference <= maxCents)) {
                     emphasizePoint = true;
                     const t = (centsDifference - minCents) / (maxCents - minCents);
                     pointColor = getColorGradient(Math.min(Math.max(t, 0), 1));
