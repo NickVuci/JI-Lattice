@@ -36,6 +36,10 @@ export function drawLattice(settings) {
                     const x = (i + j / 2) * pointSpacing;
                     const y = (j * Math.sqrt(3) / 2) * pointSpacing;
 
+                    // Apply orientation rotation
+                    const xRot = x * Math.cos(orientation) - y * Math.sin(orientation);
+                    const yRot = x * Math.sin(orientation) + y * Math.cos(orientation);
+
                     // Neighbors in the Tonnetz grid
                     const neighbors = [
                         [i + 1, j],         // Right neighbor
@@ -47,9 +51,13 @@ export function drawLattice(settings) {
                         const nx = (ni + nj / 2) * pointSpacing;
                         const ny = (nj * Math.sqrt(3) / 2) * pointSpacing;
 
+                        // Apply orientation rotation to neighbors
+                        const nxRot = nx * Math.cos(orientation) - ny * Math.sin(orientation);
+                        const nyRot = nx * Math.sin(orientation) + ny * Math.cos(orientation);
+
                         ctx.beginPath();
-                        ctx.moveTo(x + canvas.width / 2, y + canvas.height / 2);
-                        ctx.lineTo(nx + canvas.width / 2, ny + canvas.height / 2);
+                        ctx.moveTo(xRot + canvas.width / 2, yRot + canvas.height / 2);
+                        ctx.lineTo(nxRot + canvas.width / 2, nyRot + canvas.height / 2);
                         ctx.stroke();
                     }
                 }
