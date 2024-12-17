@@ -21,7 +21,7 @@ export function getIntervalLabel(intervalDecimal, labelFormat) {
     }
 }
 
-export function decimalToFraction(decimal, maxDenominator = 1000) {
+export function decimalToFraction(decimal, maxDenominator = 1000000) {
     let bestNumerator = 1;
     let bestDenominator = 1;
     let bestError = Math.abs(decimal - bestNumerator / bestDenominator);
