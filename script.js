@@ -1,4 +1,3 @@
-// script.js
 import { drawLattice } from './lattice.js';
 import { parseFraction, ratioToCents } from './utils.js';
 

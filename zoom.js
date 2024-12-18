@@ -15,17 +15,9 @@ function zoomOut() {
     drawLattice(getSettings()); // Redraw the lattice with updated zoom
 }
 
-document.getElementById('zoomIn').addEventListener('click', function() {
-    window.zoomFactor *= 1.1;
-    drawLattice(getSettings());
-});
+document.getElementById('zoomIn').addEventListener('click', zoomIn);
+document.getElementById('zoomOut').addEventListener('click', zoomOut);
 
-document.getElementById('zoomOut').addEventListener('click', function() {
-    window.zoomFactor /= 1.1;
-    drawLattice(getSettings());
-});
-
-// Zoom in/out with mouse scroll, centered on 1/1
 var canvas = document.getElementById('canvas');
 canvas.addEventListener('wheel', function(event) {
     if (event.deltaY < 0) {
