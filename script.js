@@ -1,5 +1,6 @@
 // script.js
 import { drawLattice } from './lattice.js';
+import { parseFraction, ratioToCents } from './utils.js';
 
 export var points = []; // Store point data for interaction
 let isTonnetzMode = false; // Tonnetz lattice mode

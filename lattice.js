@@ -16,8 +16,8 @@ export function drawLattice(settings) {
         showGridLines, includeInverseRange,
     } = settings;
 
-    const xAxisInterval = isNaN(parseFloat(xAxisIntervalStr)) ? parseFraction(xAxisIntervalStr) : parseFloat(xAxisIntervalStr);
-    const yAxisInterval = isNaN(parseFloat(yAxisIntervalStr)) ? parseFraction(yAxisIntervalStr) : parseFloat(yAxisIntervalStr);
+    const xAxisInterval = parseInterval(xAxisIntervalStr);
+    const yAxisInterval = parseInterval(yAxisIntervalStr);
 
     if (isNaN(xAxisInterval) || isNaN(yAxisInterval)) {
         alert('Please enter valid intervals.');
@@ -177,4 +177,15 @@ export function drawLattice(settings) {
             );
         }
     }   
+}
+
+function parseInterval(intervalStr) {
+    if (intervalStr.endsWith('c')) {
+        const cents = parseFloat(intervalStr.slice(0, -1));
+        return Math.pow(2, cents / 1200);
+    } else if (intervalStr.includes('/')) {
+        return parseFraction(intervalStr);
+    } else {
+        return parseFloat(intervalStr);
+    }
 }
