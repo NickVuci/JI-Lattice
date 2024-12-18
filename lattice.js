@@ -16,8 +16,8 @@ export function drawLattice(settings) {
         showGridLines, includeInverseRange,
     } = settings;
 
-    const xAxisInterval = parseFraction(xAxisIntervalStr);
-    const yAxisInterval = parseFraction(yAxisIntervalStr);
+    const xAxisInterval = isNaN(parseFloat(xAxisIntervalStr)) ? parseFraction(xAxisIntervalStr) : parseFloat(xAxisIntervalStr);
+    const yAxisInterval = isNaN(parseFloat(yAxisIntervalStr)) ? parseFraction(yAxisIntervalStr) : parseFloat(yAxisIntervalStr);
 
     if (isNaN(xAxisInterval) || isNaN(yAxisInterval)) {
         alert('Please enter valid intervals.');
