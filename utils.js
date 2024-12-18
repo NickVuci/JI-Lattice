@@ -11,13 +11,20 @@ export function ratioToCents(ratio) {
     return 1200 * Math.log2(ratio);
 }
 
+export function normalizeInterval(interval) {
+    // Adjust exponent with Math.round to handle floating-point errors
+    return interval * Math.pow(2, -Math.round(Math.log2(interval)));
+}
+
 export function getIntervalLabel(intervalDecimal, labelFormat) {
     if (labelFormat === 'fraction') {
         return decimalToFraction(intervalDecimal);
     } else if (labelFormat === 'decimal') {
         return intervalDecimal.toFixed(4);
     } else if (labelFormat === 'cents') {
-        return ratioToCents(intervalDecimal).toFixed(2) + 'c'; // Changed ¢ to c
+        let cents = ratioToCents(intervalDecimal);
+        cents = ((cents % 1200) + 1200) % 1200; // Ensure cents is between 0 and 1200
+        return cents.toFixed(2) + 'c';
     }
 }
 

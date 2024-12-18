@@ -1,3 +1,4 @@
+/* General Styles */
 body, html {
     margin: 0;
     padding: 0;
@@ -11,11 +12,12 @@ body, html {
     display: block;
 }
 
+/* Controls Styles */
 #controls {
     position: absolute;
     top: 40px;
     left: 10px;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
     padding: 15px;
     border-radius: 8px;
     z-index: 2;
@@ -49,9 +51,10 @@ body, html {
     margin-right: 5px;
 }
 
+/* Tooltip Styles */
 #tooltip {
     position: absolute;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     color: #fff;
     padding: 5px 8px;
     border-radius: 4px;
@@ -61,6 +64,7 @@ body, html {
     z-index: 3;
 }
 
+/* Zoom Controls Styles */
 #zoomControls {
     position: absolute;
     top: 10px;
@@ -73,6 +77,7 @@ body, html {
     margin: 2px;
 }
 
+/* Toggle Controls Button */
 #toggleControls {
     position: absolute;
     top: 10px;
@@ -86,6 +91,7 @@ body, html {
     cursor: pointer;
 }
 
+/* Hidden Class */
 .hidden {
     display: none;
 }

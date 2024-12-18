@@ -1,4 +1,4 @@
-import { parseFraction, ratioToCents, getIntervalLabel, getColorGradient } from './utils.js';
+import { parseFraction, ratioToCents, getIntervalLabel, normalizeInterval, getColorGradient } from './utils.js';
 
 export let points = []; // Export points array
 
@@ -123,12 +123,14 @@ export function drawLattice(settings) {
             }
 
             // Calculate interval
-            let intervalDecimal;
-            intervalDecimal = Math.pow(xAxisInterval, i) * Math.pow(yAxisInterval, j);
+            let intervalDecimal = Math.pow(xAxisInterval, i) * Math.pow(yAxisInterval, j);
+            intervalDecimal = normalizeInterval(intervalDecimal); // Normalize interval
 
-            // Normalize interval to within one octave
-            while (intervalDecimal < 1) intervalDecimal *= 2;
-            while (intervalDecimal >= 2) intervalDecimal /= 2;
+            // Correct for floating-point precision issues
+            const epsilon = 1e-10;
+            if (Math.abs(intervalDecimal - 1) < epsilon) {
+                intervalDecimal = 1;
+            }
 
             const centsDifference = Math.abs(ratioToCents(intervalDecimal));
             const inverseCentsDifference = 1200 - centsDifference;
@@ -189,3 +191,4 @@ function parseInterval(intervalStr) {
         return parseFloat(intervalStr);
     }
 }
+
