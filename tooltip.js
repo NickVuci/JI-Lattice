@@ -7,7 +7,7 @@ var canvas = document.getElementById('canvas');
 // Function to show tooltip for a point
 function showTooltip(point, event) {
     const fractionLabel = decimalToFraction(point.intervalDecimal);
-    const centsLabel = ratioToCents(point.intervalDecimal).toFixed(2) + '¢';
+    const centsLabel = ratioToCents(point.intervalDecimal).toFixed(2) + 'c';
     tooltip.style.left = (event.clientX + 15) + 'px';
     tooltip.style.top = (event.clientY + 15) + 'px';
     tooltip.innerHTML = `Interval: ${fractionLabel}<br>Cents: ${centsLabel}`;

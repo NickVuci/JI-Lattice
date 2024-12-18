@@ -17,7 +17,7 @@ export function getIntervalLabel(intervalDecimal, labelFormat) {
     } else if (labelFormat === 'decimal') {
         return intervalDecimal.toFixed(4);
     } else if (labelFormat === 'cents') {
-        return ratioToCents(intervalDecimal).toFixed(2) + '¢';
+        return ratioToCents(intervalDecimal).toFixed(2) + 'c';
     }
 }
 
