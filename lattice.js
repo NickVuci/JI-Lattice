@@ -131,9 +131,13 @@ export function drawLattice(settings) {
             if (Math.abs(intervalDecimal - 1) < epsilon) {
                 intervalDecimal = 1;
             }
+            
+            // Convert interval to cents and normalize to 0 - 1200 cents
+            let centsDifference = ratioToCents(intervalDecimal) % 1200;
+            if (centsDifference < 0) {
+                centsDifference += 1200;
+            }
 
-            const centsDifference = Math.abs(ratioToCents(intervalDecimal));
-            const inverseCentsDifference = 1200 - centsDifference;
             const isOne = Math.abs(intervalDecimal - 1) < 0.0001;
 
             let emphasizePoint = false;
@@ -145,10 +149,21 @@ export function drawLattice(settings) {
             }
 
             if (findCommas && !isOne) {
-                if ((centsDifference >= minCents && centsDifference <= maxCents) ||
-                    (includeInverseRange && inverseCentsDifference >= minCents && inverseCentsDifference <= maxCents)) {
+                let isComma = false;
+                let t = 0;
+
+                if (centsDifference >= minCents && centsDifference <= maxCents) {
+                    // Interval is within the specified range (0 - 600 cents)
+                    isComma = true;
+                    t = (centsDifference - minCents) / (maxCents - minCents);
+                } else if (includeInverseRange && (centsDifference >= (1200 - maxCents) && centsDifference <= (1200 - minCents))) {
+                    // Inverse interval is within the specified range (600 - 1200 cents)
+                    isComma = true;
+                    t = ((1200 - centsDifference) - minCents) / (maxCents - minCents);
+                }
+
+                if (isComma) {
                     emphasizePoint = true;
-                    const t = (centsDifference - minCents) / (maxCents - minCents);
                     pointColor = getColorGradient(Math.min(Math.max(t, 0), 1));
                 } else if (!showNonCommaIntervals) {
                     continue; // Skip points outside the comma range if toggled off
@@ -162,7 +177,7 @@ export function drawLattice(settings) {
                 label: getIntervalLabel(intervalDecimal, labelFormat),
                 cents: centsDifference.toFixed(2),
                 color: pointColor,
-                intervalDecimal: intervalDecimal // Add this line to store intervalDecimal
+                intervalDecimal: intervalDecimal,
             });
 
             ctx.beginPath();
