@@ -13,7 +13,17 @@ export function ratioToCents(ratio) {
 
 export function normalizeInterval(interval) {
     // Adjust exponent with Math.round to handle floating-point errors
-    return interval * Math.pow(2, -Math.round(Math.log2(interval)));
+    while (interval >= 2) {
+        interval /= 2;
+    }
+    while (interval < 1) {
+        interval *= 2;
+    }
+    // Ensure 2.000 is rendered as 1.0000
+    if (Math.abs(interval - 1) < 1e-10) {
+        interval = 1;
+    }
+    return interval;
 }
 
 export function getIntervalLabel(intervalDecimal, labelFormat) {
@@ -24,6 +34,10 @@ export function getIntervalLabel(intervalDecimal, labelFormat) {
     } else if (labelFormat === 'cents') {
         let cents = ratioToCents(intervalDecimal);
         cents = ((cents % 1200) + 1200) % 1200; // Ensure cents is between 0 and 1200
+        // Ensure 1200c is rendered as 0c
+        if (Math.abs(cents) < 1e-10) {
+            cents = 0;
+        }
         return cents.toFixed(2) + 'c';
     }
 }

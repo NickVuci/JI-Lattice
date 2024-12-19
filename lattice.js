@@ -199,11 +199,11 @@ export function drawLattice(settings) {
 function parseInterval(intervalStr) {
     if (intervalStr.endsWith('c')) {
         const cents = parseFloat(intervalStr.slice(0, -1));
-        return Math.pow(2, cents / 1200);
+        return normalizeInterval(Math.pow(2, cents / 1200));
     } else if (intervalStr.includes('/')) {
-        return parseFraction(intervalStr);
+        const [numerator, denominator] = intervalStr.split('/').map(parseFloat);
+        return normalizeInterval(numerator / denominator);
     } else {
-        return parseFloat(intervalStr);
+        return normalizeInterval(parseFloat(intervalStr));
     }
 }
-
